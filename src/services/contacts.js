@@ -42,8 +42,13 @@ export const getContactById = async ({ contactId, userId }) => {
   return contact;
 };
 
-export const createContact = async (payload) => {
-  const contact = await Contact.create(payload);
+export const createContact = async ({ photo, ...payload }) => {
+  const data = { ...payload };
+  if (photo) {
+    data.photo = photo;
+  }
+
+  const contact = await Contact.create(data);
   return contact;
 };
 
@@ -52,10 +57,16 @@ export const updateContact = async ({
   payload,
   userId,
   options = {},
+  photo,
 }) => {
+  const data = { ...payload };
+  if (photo) {
+    data.photo = photo;
+  }
+
   const rawResult = await Contact.findOneAndUpdate(
     { _id: contactId, userId },
-    payload,
+    data,
     {
       new: true,
       includeResultMetadata: true,
